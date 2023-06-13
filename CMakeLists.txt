@@ -53,60 +53,8 @@ find_package(Stb REQUIRED)
 
 option(HAND_SHAKE                  "Chapter 3, Shaking Hands with the Device"                  Yes)
 
-if(BASE_CODE)
-  add_subdirectory(base_code)
+if(HAND_SHAKE)
+  add_subdirectory(chapter03/HandShake)
 endif()
 
-if(INSTANCE_CREATION)
-  add_subdirectory(instance_creation)
-endif()
-
-if(VALIDATION_LAYERS)
-  add_subdirectory(validation_layers)
-endif()
-
-if(PHYSICAL_DEVICE_SELECTION)
-  add_subdirectory(physical_device_selection)
-endif()
-
-if(LOGICAL_DEVICE)
-  add_subdirectory(logical_device)
-endif()
-
-if(WINDOW_SURFACE)
-  add_subdirectory(window_surface)
-endif()
-
-if(SWAP_CHAIN)
-  add_subdirectory(swap_chain)
-endif()
-
-if(IMAGE_VIEWS)
-  add_subdirectory(swap_chain)
-endif()
-
-if(GRAPHICS_PIPELINE)
-  add_subdirectory(swap_chain)
-endif()
-
-if(SHADER_BASE)
-  add_subdirectory(shader_base)
-endif()
-
-if(FIXED_FUNCTIONS)
-  add_subdirectory(fixed_functions)
-endif()
-
-if(HELLO_TRIANGLE)
-  add_subdirectory(hello_triangle)
-endif()
-
-if(TEXTURE_MAPPING)
-  add_subdirectory(texture_mapping)
-endif()
-
-
-if(LIST_PHYSICAL_DEVICES)
-  add_subdirectory(list_physical_devices)
-endif()
 
