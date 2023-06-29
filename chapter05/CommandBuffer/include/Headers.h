@@ -26,16 +26,25 @@
 #pragma once
 
 /*********** COMPILER SPECIFIC PREPROCESSORS ***********/
+// check if this is Windows
 #ifdef _WIN32
 #pragma comment(linker, "/subsystem:console")
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #define APP_NAME_STR_LEN 80
 #define _CRT_SECURE_NO_WARNINGS
-#else  // _WIN32
+#endif  // _WIN32
+
+#ifdef __LINUX__
 #define VK_USE_PLATFORM_XCB_KHR
 #include <unistd.h>
 #endif // _WIN32
+
+// check if this is MacOS
+#ifdef __APPLE__
+#define VK_USE_PLATFORM_MACOS_MVK
+#endif // __APPLE__
+
 
 /*********** C/C++ HEADER FILES ***********/
 #include <iostream>
@@ -51,3 +60,4 @@
 
 /*********** VULKAN HEADER FILES ***********/
 #include <vulkan/vulkan.h>
+#include <vulkan/vk_enum_string_helper.h>

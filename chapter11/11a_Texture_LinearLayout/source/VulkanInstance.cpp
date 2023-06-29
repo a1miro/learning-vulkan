@@ -29,8 +29,8 @@ VkResult VulkanInstance::createInstance(std::vector<const char *>& layers, std::
 {
 	layerExtension.appRequestedExtensionNames	= extensionNames;
 	layerExtension.appRequestedLayerNames		= layers;
-	
-	// Define the Vulkan application structure 
+
+	// Define the Vulkan application structure
 	VkApplicationInfo appInfo	= {};
 	appInfo.sType				= VK_STRUCTURE_TYPE_APPLICATION_INFO;
 	appInfo.pNext				= NULL;
@@ -41,7 +41,7 @@ VkResult VulkanInstance::createInstance(std::vector<const char *>& layers, std::
 	// VK_API_VERSION is now deprecated, use VK_MAKE_VERSION instead.
 	appInfo.apiVersion			= VK_MAKE_VERSION(1, 0, 0);
 
-	// Define the Vulkan instance create info structure 
+	// Define the Vulkan instance create info structure
 	VkInstanceCreateInfo instInfo	= {};
 	instInfo.sType					= VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	instInfo.pNext					= &layerExtension.dbgReportCreateInfo;
@@ -51,6 +51,11 @@ VkResult VulkanInstance::createInstance(std::vector<const char *>& layers, std::
 	// Specify the list of layer name to be enabled.
 	instInfo.enabledLayerCount		= (uint32_t)layers.size();
 	instInfo.ppEnabledLayerNames	= layers.size() ? layers.data() : NULL;
+
+#ifdef __APPLE__
+		extensionNames.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
+		instInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+#endif
 
 	// Specify the list of extensions to be used in the application.
 	instInfo.enabledExtensionCount	= (uint32_t)extensionNames.size();

@@ -23,16 +23,17 @@
 * DEALINGS IN THE SOFTWARE.
 */
 
+#include "vulkan/vulkan.h"
 #include "VulkanDevice.h"
 #include "VulkanInstance.h"
 #include "VulkanApplication.h"
 
-VulkanDevice::VulkanDevice(VkPhysicalDevice* physicalDevice) 
+VulkanDevice::VulkanDevice(VkPhysicalDevice* physicalDevice)
 {
 	gpu = physicalDevice;
 }
 
-VulkanDevice::~VulkanDevice() 
+VulkanDevice::~VulkanDevice()
 {
 }
 
@@ -47,7 +48,7 @@ VkResult VulkanDevice::createDevice(std::vector<const char *>& layers, std::vect
 	VkResult result;
 	float queuePriorities[1]			= { 0.0 };
 	VkDeviceQueueCreateInfo queueInfo	= {};
-	queueInfo.queueFamilyIndex			= graphicsQueueIndex;  
+	queueInfo.queueFamilyIndex			= graphicsQueueIndex;
 	queueInfo.sType						= VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 	queueInfo.pNext						= NULL;
 	queueInfo.queueCount				= 1;
@@ -60,9 +61,15 @@ VkResult VulkanDevice::createDevice(std::vector<const char *>& layers, std::vect
 	deviceInfo.pQueueCreateInfos		= &queueInfo;
 	deviceInfo.enabledLayerCount		= 0;
 	deviceInfo.ppEnabledLayerNames		= NULL;											// Device layers are deprecated
-	deviceInfo.enabledExtensionCount	= (uint32_t)extensions.size();
-	deviceInfo.ppEnabledExtensionNames	= extensions.size() ? extensions.data() : NULL;
 	deviceInfo.pEnabledFeatures			= NULL;
+
+#ifdef __APPLE__
+	extensions.push_back("VK_KHR_portability_subset");
+	deviceInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
+#endif
+
+	deviceInfo.enabledExtensionCount = (uint32_t)extensions.size();
+	deviceInfo.ppEnabledExtensionNames = extensions.size() ? extensions.data() : NULL;
 
 	result = vkCreateDevice(*gpu, &deviceInfo, NULL, &device);
 	assert(result == VK_SUCCESS);
@@ -74,7 +81,7 @@ void VulkanDevice::getPhysicalDeviceQueuesAndProperties()
 {
 	// Query queue families count with pass NULL as second parameter.
 	vkGetPhysicalDeviceQueueFamilyProperties(*gpu, &queueFamilyCount, NULL);
-	
+
 	// Allocate space to accomodate Queue properties.
 	queueFamilyProps.resize(queueFamilyCount);
 
@@ -86,8 +93,8 @@ uint32_t VulkanDevice::getGraphicsQueueHandle()
 {
 	//	1. Get the number of Queues supported by the Physical device
 	//	2. Get the properties each Queue type or Queue Family
-	//			There could be 4 Queue type or Queue families supported by physical device - 
-	//			Graphics Queue	- VK_QUEUE_GRAPHICS_BIT 
+	//			There could be 4 Queue type or Queue families supported by physical device -
+	//			Graphics Queue	- VK_QUEUE_GRAPHICS_BIT
 	//			Compute Queue	- VK_QUEUE_COMPUTE_BIT
 	//			DMA				- VK_QUEUE_TRANSFER_BIT
 	//			Sparse memory	- VK_QUEUE_SPARSE_BINDING_BIT
@@ -97,8 +104,8 @@ uint32_t VulkanDevice::getGraphicsQueueHandle()
 	// 1. Iterate number of Queues supported by the Physical device
 	for (unsigned int i = 0; i < queueFamilyCount; i++){
 		// 2. Get the Graphics Queue type
-		//		There could be 4 Queue type or Queue families supported by physical device - 
-		//		Graphics Queue		- VK_QUEUE_GRAPHICS_BIT 
+		//		There could be 4 Queue type or Queue families supported by physical device -
+		//		Graphics Queue		- VK_QUEUE_GRAPHICS_BIT
 		//		Compute Queue		- VK_QUEUE_COMPUTE_BIT
 		//		DMA/Transfer Queue	- VK_QUEUE_TRANSFER_BIT
 		//		Sparse memory		- VK_QUEUE_SPARSE_BINDING_BIT
